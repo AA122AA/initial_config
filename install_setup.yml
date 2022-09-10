@@ -1,0 +1,42 @@
+---
+- name: Make terminal pretty.
+  hosts: linux
+  vars:
+    the_user: "{{ ansible_user_id }}"
+
+  tasks:
+  - name: Install zsh.
+    yum: 
+      name: zsh
+      state: latest
+    become: true
+
+  - name: Make zsh default.
+    become: yes
+    user:
+      name: "{{ the_user }}"
+      shell: /bin/zsh
+
+  - name: Clone oh-my-zsh.
+    git:
+      repo: https://github.com/ohmyzsh/ohmyzsh.git
+      dest: ~/.oh-my-zsh
+
+  - name: Download configs.
+    git:
+      repo: https://github.com/AA122AA/initial_config
+      dest: ~/initial_config
+
+  - name: Copy config.
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      owner: centos
+      group: centos
+      mode: '0644'
+    with_items:
+      - src: /home/centos/initial_config/vimrc
+        dest: /home/centos/.vimrc
+      - src: /home/centos/initial_config/zshrc
+        dest: /home/centos/.zshrc
+        
