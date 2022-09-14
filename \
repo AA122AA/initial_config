@@ -10,25 +10,25 @@
       name: zsh
       state: latest
     become: true
- 
+
   - name: Make zsh default.
     become: yes
     user:
       name: "{{ the_user }}"
       shell: /bin/zsh
- 
+
   - name: Clone oh-my-zsh.
     git:
       repo: https://github.com/ohmyzsh/ohmyzsh.git
       dest: ~/.oh-my-zsh
- 
+
   - name: Download configs.
     git:
       repo: https://github.com/AA122AA/initial_config
       dest: ~/initial_config
       clone: true
       update: true
- 
+
   - name: Copy config.
     copy:
       remote_src: true
@@ -42,20 +42,24 @@
         dest: /home/centos/.vimrc
       - src: /home/centos/initial_config/zshrc
         dest: /home/centos/.zshrc
- 
-  - name: Gather the package facts
-    ansible.builtin.package_facts:
-      manager: auto
 
   - name: Register vim version
-    debug:
+    ansible.builtin.debug:
       var: ansible_facts.packages['vim-common'][0]['version'][:1]
     register: vimVersion
 
-  - name: Install development tools
-    yum:
-    - name: "@Development Tools"
-    - name: ncurses-devel
+  - name: Check if register works.
+    debug:
+      var: vimVersion
     when: vimVersion | int < 8
 
-      #  надо написать установку vim из src + удаление старого vim 
+        #  - name: Print the package facts
+        #    ansible.builtin.debug:
+        #      var: ansible_facts.packages['vim-common'][0]['version'][:1]
+
+
+
+        #  - name: Install development tools
+        #    yum:
+        #      - name: "@Development Tools"
+        #        - name: ncurses-devel
