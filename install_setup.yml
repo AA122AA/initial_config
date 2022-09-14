@@ -1,6 +1,6 @@
 ---
 - name: Make terminal pretty.
-  hosts: linux
+  hosts: all
   vars:
     the_user: "{{ ansible_user_id }}"
 
@@ -26,14 +26,17 @@
     git:
       repo: https://github.com/AA122AA/initial_config
       dest: ~/initial_config
+      clone: true
+      update: true
 
   - name: Copy config.
     copy:
+      remote_src: true
       src: "{{ item.src }}"
       dest: "{{ item.dest }}"
       owner: centos
       group: centos
-      mode: '0644'
+      mode: 0644
     with_items:
       - src: /home/centos/initial_config/vimrc
         dest: /home/centos/.vimrc
