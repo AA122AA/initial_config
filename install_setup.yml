@@ -54,8 +54,52 @@
 
   - name: Install development tools
     yum:
-    - name: "@Development Tools"
-    - name: ncurses-devel
+      name: "@Development Tools"
+    become: yes
     when: vimVersion | int < 8
 
-      #  надо написать установку vim из src + удаление старого vim 
+  - name: Install ncurses
+    yum:
+      name: ncurses-devel
+    become: yes
+    when: vimVersion | int < 8
+
+  - name: Clone vim
+    git:
+      repo: https://github.com/vim/vim.git
+      dest: ~/vim
+    when: vimVersion | int < 8
+
+      #  - name: Config for vim
+      #    shell:
+      #     cmd: ./configure --with-features=huge --enable-multibyte --enable-rubyinterp --enable-pythoninterp --enable-perlinterp --enable-luainterp
+      #     chdir: ~/vim/src
+
+       #   - name: Make distclean. 
+       #    make:
+       #      chdir: ~/vim/src
+       #      target: distclean
+       #    when: vimVersion | int < 8
+    
+  - name: Make vim. 
+    make:
+      chdir: ~/vim/src
+    when: vimVersion | int < 8
+
+  - name: Run make install vim
+    command: make install 
+      chdir: ~/vim/src
+    become: yes
+    when: vimVersion | int < 8
+
+      # Не работает make install надо разобрать почему 
+
+  - name: Remove old vim
+    yum:
+      name: 'vim*'
+      state: remove
+    become: yes
+    when: vimVersion | int < 8
+
+
+
