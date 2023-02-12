@@ -6,7 +6,7 @@
 
   tasks:
   - name: Install zsh.
-    yum: 
+    ansible.builtin.package:
       name: zsh
       state: latest
     become: true
@@ -27,6 +27,12 @@
       repo: https://github.com/zsh-users/zsh-autosuggestions 
       dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
  
+  - name: install powerfonts
+    ansible.builtin.package:
+      name: fonts-powerline
+      state: latest
+    become: true
+
   - name: Download configs.
     git:
       repo: https://github.com/AA122AA/initial_config
